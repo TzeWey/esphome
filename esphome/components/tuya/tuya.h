@@ -113,6 +113,7 @@ class Tuya : public Component, public uart::UARTDevice {
   void add_on_initialized_callback(std::function<void()> callback) {
     this->initialized_callback_.add(std::move(callback));
   }
+  void set_skip_datapoint_query(bool skip_datapoint_query) { skip_datapoint_query_ = skip_datapoint_query;}
 
  protected:
   void handle_char_(uint8_t c);
@@ -158,6 +159,7 @@ class Tuya : public Component, public uart::UARTDevice {
   optional<TuyaCommandType> expected_response_{};
   uint8_t wifi_status_ = -1;
   CallbackManager<void()> initialized_callback_{};
+  bool skip_datapoint_query_ = false;
 };
 
 }  // namespace tuya
