@@ -100,7 +100,11 @@ void TuyaCover::set_direction_(bool inverted) {
     ESP_LOGD(TAG, "Setting direction: normal");
   }
 
-  this->parent_->set_boolean_datapoint_value(*this->direction_id_, inverted);
+  if (this->direction_datapoint_type_ == TuyaDatapointType::ENUM) {
+    this->parent_->set_enum_datapoint_value(*this->direction_id_, inverted);
+  } else {
+    this->parent_->set_boolean_datapoint_value(*this->direction_id_, inverted);
+  }
 }
 
 void TuyaCover::dump_config() {
