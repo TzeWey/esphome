@@ -27,6 +27,9 @@ class TuyaCover : public cover::Cover, public Component {
   void set_invert_position(bool invert_position) { invert_position_ = invert_position; }
   void set_invert_position_report(bool invert_position_report) { invert_position_report_ = invert_position_report; }
   void set_restore_mode(TuyaCoverRestoreMode restore_mode) { restore_mode_ = restore_mode; }
+  void set_direction_datapoint_type(TuyaDatapointType direction_datapoint_type) {
+    direction_datapoint_type_ = direction_datapoint_type;
+  }
 
  protected:
   void control(const cover::CoverCall &call) override;
@@ -44,6 +47,7 @@ class TuyaCover : public cover::Cover, public Component {
   uint32_t value_range_;
   bool invert_position_;
   bool invert_position_report_;
+  TuyaDatapointType direction_datapoint_type_ = TuyaDatapointType::BOOLEAN;
 };
 
 }  // namespace tuya
