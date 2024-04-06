@@ -9,6 +9,7 @@ from esphome.const import CONF_ID, CONF_TIME_ID, CONF_TRIGGER_ID, CONF_SENSOR_DA
 DEPENDENCIES = ["uart"]
 
 CONF_IGNORE_MCU_UPDATE_ON_DATAPOINTS = "ignore_mcu_update_on_datapoints"
+CONF_SKIP_DATAPOINT_QUERY = "skip_datapoint_query"
 
 CONF_ON_DATAPOINT_UPDATE = "on_datapoint_update"
 CONF_DATAPOINT_TYPE = "datapoint_type"
@@ -103,6 +104,7 @@ CONFIG_SCHEMA = (
                 },
                 extra_validators=assign_declare_id,
             ),
+            cv.Optional(CONF_SKIP_DATAPOINT_QUERY, default=False): cv.boolean,
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
@@ -130,3 +132,5 @@ async def to_code(config):
         await automation.build_automation(
             trigger, [(DATAPOINT_TYPES[conf[CONF_DATAPOINT_TYPE]], "x")], conf
         )
+    if CONF_SKIP_DATAPOINT_QUERY in config:
+        cg.add(var.set_skip_datapoint_query(config[CONF_SKIP_DATAPOINT_QUERY]))

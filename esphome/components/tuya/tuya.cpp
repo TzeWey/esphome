@@ -211,8 +211,14 @@ void Tuya::handle_command_(uint8_t command, uint8_t version, const uint8_t *buff
     }
     case TuyaCommandType::WIFI_STATE:
       if (this->init_state_ == TuyaInitState::INIT_WIFI) {
-        this->init_state_ = TuyaInitState::INIT_DATAPOINT;
-        this->send_empty_command_(TuyaCommandType::DATAPOINT_QUERY);
+        if (!this->skip_datapoint_query_) {
+          this->init_state_ = TuyaInitState::INIT_DATAPOINT;
+          this->send_empty_command_(TuyaCommandType::DATAPOINT_QUERY);
+        } else {
+          this->init_state_ = TuyaInitState::INIT_DONE;
+          this->set_timeout("datapoint_dump", 1000, [this] { this->dump_config(); });
+          this->initialized_callback_.call();
+        }
       }
       break;
     case TuyaCommandType::WIFI_RESET:
@@ -631,8 +637,10 @@ void Tuya::set_numeric_datapoint_value_(uint8_t datapoint_id, TuyaDatapointType 
     case 4:
       data.push_back(value >> 24);
       data.push_back(value >> 16);
+      // fall through
     case 2:
       data.push_back(value >> 8);
+      // fall through
     case 1:
       data.push_back(value >> 0);
       break;
